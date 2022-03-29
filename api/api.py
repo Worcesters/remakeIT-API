@@ -3,6 +3,7 @@ import logging
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
 
 
 load_dotenv()
@@ -10,6 +11,17 @@ SECRET_KEY=getenv('SECRET_KEY')
 PORT=getenv('PORT')
 HOST='0.0.0.0'
 BASE_URL='/api/v1'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+
+def allowed_file(filename):
+    """
+    Function that checks if the file is allowed
+    """
+    extension = filename.rsplit('.', 1)[1].lower()
+    if extension in ALLOWED_EXTENSIONS:
+        return True
+    else: 
+        return False
 
 def create_app():
     """
@@ -58,7 +70,42 @@ def create_app():
                 }
             ]
         )
-
+        
+    @app.route(f'{BASE_URL}/upload', methods=['POST'])
+    def upload():
+        if 'file' not in request.files:
+            return jsonify(
+                message={
+                    'fr': "Aucun fichier n'a été envoyé.",
+                    'en': "No file has been sent.",
+                },
+                error=True,
+            ), 400
+            return redirect(request.url)
+        
+        file = request.files['file']
+        
+        if allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            return jsonify(
+                message={
+                    'fr': "Fichier envoyé avec succès!",
+                    'en': "File sent successfully!"
+                },
+                error=False,
+                file="{}".format(file.filename)
+            ), 200
+        
+        return jsonify(
+            message={
+                'fr': "Le fichier n'est pas autorisé",
+                'en': "The file is not allowed"
+            },
+            error=True,
+            allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
+            file="{}".format(file.filename)
+        ), 400       
+                
     return app
 
 
