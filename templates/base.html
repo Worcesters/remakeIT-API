@@ -89,8 +89,8 @@
             </div>
         </div>
         <!-- partial -->
-        <!--<script src="uploader.js"></script>-->
-        <script type="module" src="./script.js"></script>
+        <script src="uploader.js"></script>
+        <script type="module" src="{{url_for('static', filename='script.js')}}"></script>
         <script>
             var app = new Vue({
                 el: '#remakeIT',
@@ -219,6 +219,7 @@
         padding: 20px;
         left: 45.5rem;
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
         display: block;
     }
@@ -256,6 +257,7 @@
                 var(--base) 25%,
                 var(--complimentary2));
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
         -moz-background-clip: text;
         -moz-text-fill-color: transparent;

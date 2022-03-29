@@ -1,6 +1,6 @@
 from os import getenv
 import logging
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify, redirect, render_template, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
@@ -39,12 +39,13 @@ def create_app():
     CORS(app)
     app.config['SECRET_KEY'] = SECRET_KEY
     
-    @app.route('/', methods=['GET', 'POST'])
+    @app.route('/', methods=['GET'])
     def index():
         """
-        Redirect to the BASE_URL
+        Return base.html template
         """
-        return redirect(BASE_URL, code=302)
+        return render_template('base.html')
+        
 
     @app.route(f'{BASE_URL}/', methods=['GET', 'POST'])
     def welcome():
