@@ -1,6 +1,9 @@
 # Fucking mac files
 .DS_Store
 
+# Logs
+remakeIT_api.log
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
