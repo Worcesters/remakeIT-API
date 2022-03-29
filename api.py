@@ -42,9 +42,9 @@ def create_app():
     @app.route('/', methods=['GET'])
     def index():
         """
-        Return base.html template
+        Return index.html template
         """
-        return render_template('base.html')
+        return render_template('index.html')
         
 
     @app.route(f'{BASE_URL}/', methods=['GET', 'POST'])
