@@ -1,6 +1,9 @@
-from os import getenv
 import logging
-from flask import Flask, request, jsonify, redirect, render_template, send_from_directory
+import numpy as np
+import cv2
+
+from os import getenv
+from flask import Flask, request, jsonify, redirect, render_template, send_from_directory, make_response
 from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
@@ -72,7 +75,7 @@ def create_app():
             ]
         )
         
-    @app.route(f'{BASE_URL}/upload', methods=['POST'])
+    @app.route(f'{BASE_URL}/convert', methods=['POST'])
     def upload():
         if 'file' not in request.files:
             return jsonify(
@@ -85,17 +88,14 @@ def create_app():
             return redirect(request.url)
         
         file = request.files['file']
+        extension_target = request.form.get('extension')
         
-        if allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            return jsonify(
-                message={
-                    'fr': "Fichier envoyé avec succès!",
-                    'en': "File sent successfully!"
-                },
-                error=False,
-                file="{}".format(file.filename)
-            ), 200
+        if allowed_file(file.filename) & allowed_file(f'.{extension_target}'):
+            img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
+            _, img_encoded = cv2.imencode(f'.{extension_target}', img)
+            response = make_response(img_encoded.tobytes())
+            response.headers['Content-Type'] = f'image/{extension_target}'
+            return response
         
         return jsonify(
             message={
