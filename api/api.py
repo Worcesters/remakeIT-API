@@ -20,7 +20,7 @@ def create_app():
         level=logging.DEBUG,
         format="%(asctime)s %(name)-12s %(levelname)-8s %(message)s",
         datefmt="%m-%d %H:%M",
-        handlers=[logging.FileHandler("api/remakeIT_api.log"), logging.StreamHandler()]
+        handlers=[logging.FileHandler("remakeIT_api.log"), logging.StreamHandler()]
     )
 
     app = Flask(__name__)
