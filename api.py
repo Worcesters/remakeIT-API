@@ -76,7 +76,7 @@ def create_app():
         )
         
     @app.route(f'{BASE_URL}/convert', methods=['POST'])
-    def upload():
+    def convert():
         if 'file' not in request.files:
             return jsonify(
                 message={
@@ -106,6 +106,39 @@ def create_app():
             allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
             file="{}".format(file.filename)
         ), 400       
+        
+    @app.route(f'{BASE_URL}/black-white', methods=['POST'])
+    def black_white():
+        if 'file' not in request.files:
+            return jsonify(
+                message={
+                    'fr': "Aucun fichier n'a été envoyé.",
+                    'en': "No file has been sent.",
+                },
+                error=True,
+            ), 400
+            return redirect(request.url)
+        
+        file = request.files['file']
+        extension = file.filename.rsplit('.', 1)[1].lower()
+        
+        if allowed_file(file.filename):
+            img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
+            grayImage = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            _, img_encoded = cv2.imencode(f'.{extension}', grayImage)
+            response = make_response(img_encoded.tobytes())
+            response.headers['Content-Type'] = f'image/{extension}'
+            return response
+        
+        return jsonify(
+            message={
+                'fr': "Le fichier n'est pas autorisé",
+                'en': "The file is not allowed"
+            },
+            error=True,
+            allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
+            file="{}".format(file.filename)
+        ), 400
                 
     return app
 
