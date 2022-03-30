@@ -152,12 +152,20 @@ def create_app():
 
     @app.route(f'{BASE_URL}/download', methods=['POST', 'GET'])
     def download_new_file():
+        # Arguments de l'URL
         t_args = {k: v for k, v in request.args.items()}
-        file = request.files['file']
-        extension_target = request.form.get('extension')
-        img = ImageHandler(file)
-        img.set_ext(extension_target)
-        return img
+        image = ImageHandler(request.files['file'])
+        
+        if "extension" in t_args:
+            image.set_ext(t_args['extension'])
+            
+        if "filter" in t_args:
+            image.set_filter(t_args['filter'])
+            
+        response = make_response(image.encoded)
+        response.headers['Content-Type'] = f'image/{image.target_extension}'
+        
+        return response
 
     return app
 
