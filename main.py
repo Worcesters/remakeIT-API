@@ -10,39 +10,13 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 
 from classes.ImageHandler import ImageHandler
-
+from utils.constants import ALLOWED_EXTENSIONS, HOST, BASE_URL
+from utils.func import allowed_file
 
 load_dotenv()
-SECRET_KEY=getenv('SECRET_KEY')
-PORT=getenv('PORT')
-HOST='0.0.0.0'
-BASE_URL='/api/v1'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+SECRET_KEY = getenv('SECRET_KEY')
+PORT = getenv('PORT')
 
-
-def allowed_file_dec(func, filename):
-    """
-    Execute function if request contains valid access token, user role.
-    """
-    @wraps(func)
-    def decorated(*args, **kwargs):
-        extension = filename.rsplit('.', 1)[1].lower()
-        if extension in ALLOWED_EXTENSIONS:
-            return True
-        else:
-            return False
-        return func(*args, **kwargs)
-    return decorated
-
-def allowed_file(filename):
-    """
-    Function that checks if the file is allowed
-    """
-    extension = filename.rsplit('.', 1)[1].lower()
-    if extension in ALLOWED_EXTENSIONS:
-        return True
-    else: 
-        return False
 
 def create_app():
     """
@@ -116,56 +90,25 @@ def create_app():
             allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
             file="{}".format(file.filename)
         ), 400       
-        
-    @app.route(f'{BASE_URL}/black-white', methods=['POST'])
-    def black_white():
-        if 'file' not in request.files:
-            return jsonify(
-                message={
-                    'fr': "Aucun fichier n'a été envoyé.",
-                    'en': "No file has been sent.",
-                },
-                error=True,
-            ), 400
-            return redirect(request.url)
-        
-        file = request.files['file']
-        extension = file.filename.rsplit('.', 1)[1].lower()
-        
-        if allowed_file(file.filename):
-            img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
-            grayImage = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            _, img_encoded = cv2.imencode(f'.{extension}', grayImage)
-            response = make_response(img_encoded.tobytes())
-            response.headers['Content-Type'] = f'image/{extension}'
-            return response
-        
-        return jsonify(
-            message={
-                'fr': "Le fichier n'est pas autorisé",
-                'en': "The file is not allowed"
-            },
-            error=True,
-            allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
-            file="{}".format(file.filename)
-        ), 400
 
     @app.route(f'{BASE_URL}/download', methods=['POST', 'GET'])
     def download_new_file():
-        # Arguments de l'URL
+        # Arguments de l'URL
         t_args = {k: v for k, v in request.args.items()}
-        image = ImageHandler(request.files['file'])
-        
-        if "extension" in t_args:
-            image.set_ext(t_args['extension'])
-            
-        if "filter" in t_args:
-            image.set_filter(t_args['filter'])
-            
-        response = make_response(image.encoded)
-        response.headers['Content-Type'] = f'image/{image.target_extension}'
-        
-        return response
+        file = request.files['file']
+        if allowed_file(file.filename):
+            image = ImageHandler(file)
+
+            if "extension" in t_args:
+                image.set_ext(t_args['extension'])
+
+            if "filter" in t_args:
+                image.set_filter(t_args['filter'])
+
+            response = make_response(image.encoded)
+            response.headers['Content-Type'] = f'image/{image.target_extension}'
+
+            return response
 
     return app
 
