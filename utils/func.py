@@ -1,4 +1,4 @@
-from constants import ALLOWED_EXTENSIONS
+from utils.constants import ALLOWED_EXTENSIONS
 
 
 def allowed_file(filename):
