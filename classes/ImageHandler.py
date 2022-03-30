@@ -30,11 +30,8 @@ class ImageHandler():
         elif filter == 'anaglyph':
             pass
 
-        
-
     def set_dimensions(self):
         pass
 
     def set_compression(self):
         pass
-
