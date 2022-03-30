@@ -10,7 +10,7 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 
 from classes.ImageHandler import ImageHandler
-from utils.constants import ALLOWED_EXTENSIONS, HOST, BASE_URL
+from utils.constants import HOST, BASE_URL
 from utils.func import allowed_file
 
 load_dotenv()
@@ -58,38 +58,6 @@ def create_app():
                 }
             ]
         )
-        
-    @app.route(f'{BASE_URL}/convert', methods=['POST'])
-    def convert():
-        if 'file' not in request.files:
-            return jsonify(
-                message={
-                    'fr': "Aucun fichier n'a été envoyé.",
-                    'en': "No file has been sent.",
-                },
-                error=True,
-            ), 400
-            return redirect(request.url)
-        
-        file = request.files['file']
-        extension_target = request.form.get('extension')
-        
-        if allowed_file(file.filename) & allowed_file(f'.{extension_target}'):
-            img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
-            _, img_encoded = cv2.imencode(f'.{extension_target}', img)
-            response = make_response(img_encoded.tobytes())
-            response.headers['Content-Type'] = f'image/{extension_target}'
-            return response
-        
-        return jsonify(
-            message={
-                'fr': "Le fichier n'est pas autorisé",
-                'en': "The file is not allowed"
-            },
-            error=True,
-            allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
-            file="{}".format(file.filename)
-        ), 400       
 
     @app.route(f'{BASE_URL}/download', methods=['POST', 'GET'])
     def download_new_file():
@@ -109,6 +77,8 @@ def create_app():
             response.headers['Content-Type'] = f'image/{image.target_extension}'
 
             return response
+        else:
+            return redirect(request.url)
 
     return app
 
