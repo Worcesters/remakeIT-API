@@ -6,7 +6,10 @@ from os import getenv
 from flask import Flask, request, jsonify, redirect, render_template, send_from_directory, make_response
 from flask_cors import CORS
 from dotenv import load_dotenv
+from functools import wraps
 from werkzeug.utils import secure_filename
+
+from classes.ImageHandler import ImageHandler
 
 
 load_dotenv()
@@ -15,6 +18,21 @@ PORT=getenv('PORT')
 HOST='0.0.0.0'
 BASE_URL='/api/v1'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+
+
+def allowed_file_dec(func, filename):
+    """
+    Execute function if request contains valid access token, user role.
+    """
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        extension = filename.rsplit('.', 1)[1].lower()
+        if extension in ALLOWED_EXTENSIONS:
+            return True
+        else:
+            return False
+        return func(*args, **kwargs)
+    return decorated
 
 def allowed_file(filename):
     """
@@ -41,14 +59,6 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     app.config['SECRET_KEY'] = SECRET_KEY
-    
-    @app.route('/', methods=['GET'])
-    def index():
-        """
-        Return index.html template
-        """
-        return render_template('index.html')
-        
 
     @app.route(f'{BASE_URL}/', methods=['GET', 'POST'])
     def welcome():
@@ -139,7 +149,16 @@ def create_app():
             allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
             file="{}".format(file.filename)
         ), 400
-                
+
+    @app.route(f'{BASE_URL}/download', methods=['POST', 'GET'])
+    def download_new_file():
+        t_args = {k: v for k, v in request.args.items()}
+        file = request.files['file']
+        extension_target = request.form.get('extension')
+        img = ImageHandler(file)
+        img.set_ext(extension_target)
+        return img
+
     return app
 
 
