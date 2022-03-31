@@ -1,12 +1,9 @@
 import logging
-import numpy as np
 
 from os import getenv
-from flask import Flask, request, jsonify, redirect, render_template, send_from_directory, make_response
+from flask import Flask, request, jsonify, redirect, make_response
 from flask_cors import CORS
 from dotenv import load_dotenv
-from functools import wraps
-from werkzeug.utils import secure_filename
 
 from classes.ImageHandler import ImageHandler
 from utils.constants import HOST, BASE_URL, AUTHORS, ALLOWED_EXTENSIONS
@@ -32,6 +29,10 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     app.config['SECRET_KEY'] = SECRET_KEY
+    
+    @app.route('/')
+    def redirect_to_base_url():
+        return redirect(BASE_URL)
 
     @app.route(f'{BASE_URL}/', methods=['GET', 'POST'])
     def welcome():
