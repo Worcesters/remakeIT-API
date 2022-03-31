@@ -1,6 +1,5 @@
 import logging
 import numpy as np
-import cv2
 
 from os import getenv
 from flask import Flask, request, jsonify, redirect, render_template, send_from_directory, make_response
@@ -60,12 +59,15 @@ def create_app():
         file = request.files['file']
         if allowed_file(file.filename):
             image = ImageHandler(file)
+            
+            if "filter" in t_args:
+                image.set_filter(t_args['filter'])
+            
+            # if "compression" in t_args:
+            #     image.set_compression(t_args['compression'])
 
             if "extension" in t_args:
                 image.set_ext(t_args['extension'])
-
-            if "filter" in t_args:
-                image.set_filter(t_args['filter'])
 
             response = make_response(image.encoded)
             response.headers['Content-Type'] = f'image/{image.target_extension}'
