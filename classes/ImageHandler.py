@@ -2,19 +2,18 @@ import io
 from PIL import Image, ImageOps, ImageFilter
 
 class ImageHandler():
-    def __get_extension(self, ext):
-        if ext == 'jpg':
-            return 'jpeg'
-        return ext
-       
+
     def __init__(self, image):
         self.file = Image.open(image.stream)
         self.file = self.file.convert('RGB')
         self.target_extension = self.__get_extension(image.filename.split('.')[-1])
-        self.bytes_array = io.BytesIO()
-        self.file.save(self.bytes_array, format=self.target_extension)
-        self.encoded = self.bytes_array.getvalue()
-        
+        self.__save()
+
+    def __get_extension(self, ext):
+        if ext == 'jpg':
+            return 'jpeg'
+        return ext
+
     def __save(self, quality=100):
         self.bytes_array = io.BytesIO()
         self.file.save(self.bytes_array, format=self.target_extension, quality=quality)
@@ -61,8 +60,7 @@ class ImageHandler():
             self.file = self.file.filter(ImageFilter.SMOOTH)
         elif f == 'smoothMore':
             self.file = self.file.filter(ImageFilter.SMOOTH_MORE)
-        
-            
+
         self.__save()
 
     def set_dimensions_and_compression(self, h, w, c):
