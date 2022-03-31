@@ -66,8 +66,11 @@ def create_app():
             if "filter" in t_args:
                 image.set_filter(t_args['filter'])
             
-            # if "compression" in t_args:
-            #     image.set_compression(t_args['compression'])
+            if "compression" or "weight" or "width" in t_args:
+                h = int(t_args['height']) if "height" in t_args else None
+                w = int(t_args['width']) if "width" in t_args else None
+                c = int(t_args['compression']) if "compression" in t_args else None
+                image.set_dimensions_and_compression(h, w, c)
 
             response = make_response(image.encoded)
             response.headers['Content-Type'] = f'image/{image.target_extension}'
