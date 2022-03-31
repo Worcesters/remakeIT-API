@@ -60,9 +60,6 @@ def create_app():
         file = request.files['file']
         if allowed_file(file.filename):
             image = ImageHandler(file)
-
-            if "extension" in t_args:
-                image.set_ext(t_args['extension'])
             
             if "filter" in t_args:
                 image.set_filter(t_args['filter'])
@@ -71,7 +68,10 @@ def create_app():
                 h = int(t_args['height']) if "height" in t_args else None
                 w = int(t_args['width']) if "width" in t_args else None
                 c = int(t_args['compression']) if "compression" in t_args else None
-                image.set_dimensions_and_compression(h, w, c)
+                image.set_dimensions_and_compression(h, w, c)           
+
+            if "extension" in t_args:
+                image.set_ext(t_args['extension'])
 
             response = make_response(image.encoded)
             response.headers['Content-Type'] = f'image/{image.target_extension}'

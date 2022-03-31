@@ -14,9 +14,9 @@ class ImageHandler():
             return 'jpeg'
         return ext
 
-    def __save(self, quality=100):
+    def __save(self):
         self.bytes_array = io.BytesIO()
-        self.file.save(self.bytes_array, format=self.target_extension, quality=quality)
+        self.file.save(self.bytes_array, format=self.target_extension)
         self.encoded = self.bytes_array.getvalue()
 
     def set_ext(self, ext):
@@ -68,4 +68,6 @@ class ImageHandler():
         w = w if w else self.file.width
         c = c if c else 100
         self.file = self.file.resize((w, h), Image.ANTIALIAS)
-        self.__save(c)
+        self.bytes_array = io.BytesIO()
+        self.file.save(self.bytes_array, format='jpeg', quality=c)
+        self.encoded = self.bytes_array.getvalue()
