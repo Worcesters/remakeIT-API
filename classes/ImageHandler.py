@@ -27,7 +27,7 @@ class ImageHandler():
         if f in filters:
             file = cv2.cvtColor(self.file, filters[f])
             self.encoded = self.__encode_to_bytes(file)
-        elif filter == 'anaglyph':
+        elif f == 'anaglyph':
             pass
 
     def set_dimensions(self):
