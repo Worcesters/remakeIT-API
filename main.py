@@ -10,7 +10,7 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 
 from classes.ImageHandler import ImageHandler
-from utils.constants import HOST, BASE_URL, AUTHORS
+from utils.constants import HOST, BASE_URL, AUTHORS, ALLOWED_EXTENSIONS
 from utils.func import allowed_file
 
 load_dotenv()
