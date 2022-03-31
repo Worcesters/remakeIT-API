@@ -1,7 +1,7 @@
 import io
 import numpy as np
 from flask import make_response
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageFilter
 
 class ImageHandler():
     def __get_extension(self, ext):
@@ -42,6 +42,31 @@ class ImageHandler():
             self.file = ImageOps.posterize(self.file, 8)
         if f == 'mirror':
             self.file = ImageOps.mirror(self.file)
+        if f == 'boxBlur':
+            self.file = self.file.filter(ImageFilter.BoxBlur(3))
+        if f == 'gaussianBlur':
+            self.file = self.file.filter(ImageFilter.GaussianBlur(4))
+        if f == 'unsharpMask':
+            self.file = self.file.filter(ImageFilter.UnsharpMask(4, 4, 1))
+        if f == 'sharpen':
+            self.file = self.file.filter(ImageFilter.SHARPEN)
+        if f == 'contour':
+            self.file = self.file.filter(ImageFilter.CONTOUR)
+        if f == 'detail':
+            self.file = self.file.filter(ImageFilter.DETAIL)
+        if f == 'edgeEnhance':
+            self.file = self.file.filter(ImageFilter.EDGE_ENHANCE)
+        if f == 'edgeEnhanceMore':
+            self.file = self.file.filter(ImageFilter.EDGE_ENHANCE_MORE)
+        if f == 'emboss':
+            self.file = self.file.filter(ImageFilter.EMBOSS)
+        if f == 'findEdges':
+            self.file = self.file.filter(ImageFilter.FIND_EDGES)
+        if f == 'smooth':
+            self.file = self.file.filter(ImageFilter.SMOOTH)
+        if f == 'smoothMore':
+            self.file = self.file.filter(ImageFilter.SMOOTH_MORE)
+        
             
         self.__save()
 
