@@ -9,7 +9,7 @@ class ImageHandler():
         # Je transforme l'image en numpy array depuis le buffer de l'image, puis je la décode avec cv2
         self.file = cv2.imdecode(np.frombuffer(image.read(), np.uint8), cv2.IMREAD_COLOR)
         self.target_extension = image.filename.rsplit('.', 1)[1].lower()
-        # J'encode l'image en bytes dans le format souhaité (par defaut, base_extension)
+        # J'encode l'image en bytes dans le format souhaité (par defaut, base_extension)
         _, img_encoded = cv2.imencode(f'.{self.target_extension}', self.file)
         self.encoded = img_encoded.tobytes()
         
