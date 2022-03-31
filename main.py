@@ -10,7 +10,7 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 
 from classes.ImageHandler import ImageHandler
-from utils.constants import HOST, BASE_URL
+from utils.constants import HOST, BASE_URL, AUTHORS
 from utils.func import allowed_file
 
 load_dotenv()
@@ -39,30 +39,24 @@ def create_app():
         return jsonify(
             message="Welcome to the Remake IT API!",
             version="0.1.0",
-            authors=[
-                {
-                    'name': 'Théo BIET',
-                    'github': 'https://github.com/TheoBIET',
-                },
-                {
-                    'name': 'Éric Clouzet',
-                    'github': 'https://github.com/EricClouzet',
-                },
-                {
-                    'name': 'Mickael Milliat',
-                    'github': 'https://github.com/mm-devpro',
-                },
-                {
-                    'name': 'Jérémy',
-                    'github': 'https://github.com/Worcesters',
-                }
-            ]
+            authors=AUTHORS
         )
 
     @app.route(f'{BASE_URL}/download', methods=['POST', 'GET'])
     def download_new_file():
         # Arguments de l'URL
         t_args = {k: v for k, v in request.args.items()}
+        
+        if 'file' not in request.files:
+            return jsonify(
+                message={
+                    'fr': "Aucun fichier n'a été envoyé.",
+                    'en': "No file has been sent.",
+                },
+                error=True,
+            ), 400
+            return redirect(request.url)
+        
         file = request.files['file']
         if allowed_file(file.filename):
             image = ImageHandler(file)
@@ -78,8 +72,16 @@ def create_app():
 
             return response
         else:
-            return redirect(request.url)
-
+            return jsonify(
+                message={
+                    'fr': "Le fichier n'est pas autorisé",
+                    'en': "The file is not allowed"
+                },
+                error=True,
+                allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
+                file="{}".format(file.filename)
+            ), 400
+                
     return app
 
 
