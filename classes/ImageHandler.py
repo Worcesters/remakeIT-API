@@ -31,9 +31,17 @@ class ImageHandler():
 
     def set_filter(self, f):        
         if f == 'grayScale':
-            self.file = ImageOps.grayscale(self.file)
+            self.file = ImageOps.grayscale(self.file)            
         if f == 'invert':
             self.file = ImageOps.invert(self.file)
+        if f == 'solarize':
+            self.file = ImageOps.solarize(self.file)
+        if f == '4bit':
+            self.file = ImageOps.posterize(self.file, 4)
+        if f == '8bit':
+            self.file = ImageOps.posterize(self.file, 8)
+        if f == 'mirror':
+            self.file = ImageOps.mirror(self.file)
             
         self.__save()
 
