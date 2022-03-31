@@ -21,15 +21,18 @@ class ImageHandler():
         self.target_extension = ext
         self.encoded = self.__encode_to_bytes(self.file)
 
-    def set_filter(self, filter):
+    def set_filter(self, f):
         filters = {'grayScale': cv2.COLOR_BGR2GRAY, 'hsv': cv2.COLOR_BGR2HSV, 'rgb': cv2.COLOR_BGR2RGB}
         
-        if filter in filters:
-            file = cv2.cvtColor(self.file, filters[filter])
+        if f in filters:
+            file = cv2.cvtColor(self.file, filters[f])
             self.encoded = self.__encode_to_bytes(file)
-        elif filter == 'anaglyph':
+        elif f == 'anaglyph':
             pass
-
+        elif f == "negatif":
+            file = cv2.bitwise_not(self.file)
+            self.encoded = self.__encode_to_bytes(file)
+            
     def set_dimensions(self):
         pass
 
