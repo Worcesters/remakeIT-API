@@ -7,6 +7,7 @@ class ImageHandler():
         self.file = Image.open(image.stream)
         self.file = self.file.convert('RGB')
         self.target_extension = self.__get_extension(image.filename.split('.')[-1])
+        self.quality = 100
         self.__save()
 
     def __get_extension(self, ext):
@@ -16,7 +17,7 @@ class ImageHandler():
 
     def __save(self):
         self.bytes_array = io.BytesIO()
-        self.file.save(self.bytes_array, format=self.target_extension)
+        self.file.save(self.bytes_array, format=self.target_extension, quality=self.quality)
         self.encoded = self.bytes_array.getvalue()
 
     def set_ext(self, ext):
@@ -67,6 +68,7 @@ class ImageHandler():
         h = h if h else self.file.height
         w = w if w else self.file.width
         c = c if c else 100
+        self.quality = c
         self.file = self.file.resize((w, h), Image.ANTIALIAS)
         self.bytes_array = io.BytesIO()
         self.file.save(self.bytes_array, format='jpeg', quality=c)
