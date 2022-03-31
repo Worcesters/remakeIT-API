@@ -40,9 +40,9 @@ class ImageHandler():
         elif f == 'mirror':
             self.file = ImageOps.mirror(self.file)
         elif f == 'boxBlur':
-            self.file = self.file.filter(ImageFilter.BoxBlur(3))
+            self.file = self.file.filter(ImageFilter.BoxBlur(30))
         elif f == 'gaussianBlur':
-            self.file = self.file.filter(ImageFilter.GaussianBlur(4))
+            self.file = self.file.filter(ImageFilter.GaussianBlur(30))
         elif f == 'unsharpMask':
             self.file = self.file.filter(ImageFilter.UnsharpMask(4, 4, 1))
         elif f == 'sharpen':
