@@ -11,6 +11,10 @@ class ImageHandler():
        
     def __init__(self, image):
         self.file = Image.open(image.stream)
+        
+        if self.file.mode != 'RGB':
+            self.file = self.file.convert('RGB')
+            
         self.target_extension = self.__get_extension(image.filename.split('.')[-1])
         self.bytes_array = io.BytesIO()
         self.file.save(self.bytes_array, format=self.target_extension)
@@ -28,6 +32,8 @@ class ImageHandler():
     def set_filter(self, f):        
         if f == 'grayScale':
             self.file = ImageOps.grayscale(self.file)
+        if f == 'invert':
+            self.file = ImageOps.invert(self.file)
             
         self.__save()
 
