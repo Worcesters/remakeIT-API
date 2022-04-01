@@ -21,7 +21,7 @@ def allowed_filter(filter):
         return False
     
 def c_is_valid(c):
-    if c > 0 and c < 100:
+    if c > 0 and c <= 100:
         return True
     else:
         return False
