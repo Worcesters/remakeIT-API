@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from classes.ImageHandler import ImageHandler
 from utils.constants import HOST, BASE_URL, AUTHORS, ALLOWED_EXTENSIONS, ALLOWED_FILTERS
-from utils.func import allowed_file, allowed_filter, c_is_valid
+from utils.func import allowed_file, allowed_filter, c_is_valid, allowed_extension
 
 load_dotenv()
 SECRET_KEY = getenv('SECRET_KEY')
