@@ -15,7 +15,7 @@ AUTHORS=[
                     'github': 'https://github.com/mm-devpro',
                 },
                 {
-                    'name': 'Jérémy',
+                    'name': 'Jérémy Didier',
                     'github': 'https://github.com/Worcesters',
                 }
             ]
