@@ -6,37 +6,41 @@ import sys
 def make_anaglyph(img):
     MIN_SIZE = min(img.size)
     H, W = (MIN_SIZE, MIN_SIZE-100)
-    
+
     # Make a copy of the image
     img_copy = img.copy()
-    
+
     # Resize the image to a square
     resized = img_copy.resize((MIN_SIZE, MIN_SIZE))
-    
+
     # Dewarp the image and play with perspective for moove the to left and right
-    R_dewrap = resized.transform((H, W), Image.QUAD, data=(0,50,50,H,W,H,H,0), resample=Image.BILINEAR)
-    L_dewrap = resized.transform((H, W), Image.QUAD, data=(50,50,0,H,W,H,H,50), resample=Image.BILINEAR)
-    
+    R_dewrap = resized.transform((H, W), Image.QUAD, data=(
+        0, 50, 50, H, W, H, H, 0), resample=Image.BILINEAR)
+    L_dewrap = resized.transform((H, W), Image.QUAD, data=(
+        50, 50, 0, H, W, H, H, 50), resample=Image.BILINEAR)
+
     # Convert the image to grayscale
     R_gray = ImageOps.grayscale(R_dewrap)
     L_gray = ImageOps.grayscale(L_dewrap)
-    
+
     # Make Red and Cyan filters
     red = ImageOps.colorize(R_gray, (0, 0, 0), (255, 0, 0))
     cyan = ImageOps.colorize(L_gray, (0, 0, 0), (0, 255, 255))
-    
+
     # Blend the images, and increase brightness for better contrast
-    blend = Image.blend(red,cyan,0.5)
+    blend = Image.blend(red, cyan, 0.5)
     brightness = ImageEnhance.Brightness(blend)
     image_3d = brightness.enhance(1.75)
 
     return image_3d
 
+
 class ImageHandler():
     def __init__(self, image):
         self.file = Image.open(image.stream)
         self.file = self.file.convert('RGB')
-        self.target_extension = self.__get_extension(image.filename.split('.')[-1])
+        self.target_extension = self.__get_extension(
+            image.filename.split('.')[-1])
         self.quality = 100
         self.__save()
 
@@ -47,16 +51,17 @@ class ImageHandler():
 
     def __save(self):
         self.bytes_array = io.BytesIO()
-        self.file.save(self.bytes_array, format=self.target_extension, quality=self.quality)
+        self.file.save(self.bytes_array,
+                       format=self.target_extension, quality=self.quality)
         self.encoded = self.bytes_array.getvalue()
 
     def set_ext(self, ext):
         self.target_extension = self.__get_extension(ext)
         self.__save()
 
-    def set_filter(self, f):     
+    def set_filter(self, f):
         if f == 'grayScale':
-            self.file = ImageOps.grayscale(self.file)            
+            self.file = ImageOps.grayscale(self.file)
         elif f == 'invert':
             self.file = ImageOps.invert(self.file)
         elif f == 'solarize':
@@ -97,7 +102,7 @@ class ImageHandler():
             new_img = self.file
             width, height = new_img.size
             img_map = new_img.load()
-            print(img_map[4,4])
+            print(img_map[4, 4])
             # work on pixels
             for py in range(height):
                 for px in range(width):

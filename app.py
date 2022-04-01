@@ -23,13 +23,14 @@ def create_app():
         level=logging.DEBUG,
         format="%(asctime)s %(name)-12s %(levelname)-8s %(message)s",
         datefmt="%m-%d %H:%M",
-        handlers=[logging.FileHandler("remakeIT_api.log"), logging.StreamHandler()]
+        handlers=[logging.FileHandler(
+            "remakeIT_api.log"), logging.StreamHandler()]
     )
 
     app = Flask(__name__)
     CORS(app)
     app.config['SECRET_KEY'] = SECRET_KEY
-    
+
     @app.route('/')
     def redirect_to_base_url():
         return redirect(BASE_URL)
@@ -46,7 +47,7 @@ def create_app():
     def download_new_file():
         # Arguments de l'URL
         t_args = {k: v for k, v in request.args.items()}
-        
+
         if 'file' not in request.files:
             return jsonify(
                 message={
@@ -56,11 +57,11 @@ def create_app():
                 error=True,
             ), 400
             return redirect(request.url)
-        
+
         file = request.files['file']
         if allowed_file(file.filename):
             image = ImageHandler(file)
-            
+
             if "filter" in t_args:
                 filter = t_args["filter"]
                 if(allowed_filter(filter)):
@@ -77,8 +78,9 @@ def create_app():
             if "compression" or "weight" or "width" in t_args:
                 h = int(t_args['height']) if "height" in t_args else None
                 w = int(t_args['width']) if "width" in t_args else None
-                c = int(t_args['compression']) if "compression" in t_args else None
-                
+                c = int(t_args['compression']
+                        ) if "compression" in t_args else None
+
                 if c:
                     if not c_is_valid(c):
                         return jsonify(
@@ -88,9 +90,9 @@ def create_app():
                             },
                             error=True,
                         ), 400
-                        
-                print('Set dimensions')                
-                image.set_dimensions_and_compression(h, w, c)           
+
+                print('Set dimensions')
+                image.set_dimensions_and_compression(h, w, c)
 
             if "extension" in t_args:
                 ext = t_args['extension']
@@ -121,7 +123,7 @@ def create_app():
                 allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
                 file="{}".format(file.filename)
             ), 400
-                
+
     return app
 
 
