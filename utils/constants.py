@@ -1,4 +1,5 @@
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+ALLOWED_FILTERS = ['grayScale','invert','solarize','4bit','8bit','mirror','boxBlur','gaussianBlur','unsharpMask','sharpen','contour','detail','edgeEnhance','edgeEnhanceMore','emboss','findEdges','smooth','smoothMore','anaglyph','sepia']
 HOST='0.0.0.0'
 BASE_URL='/api/v1'
 AUTHORS=[

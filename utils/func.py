@@ -1,12 +1,27 @@
-from utils.constants import ALLOWED_EXTENSIONS
+from utils.constants import ALLOWED_EXTENSIONS, ALLOWED_FILTERS
 from PIL import Image, ImageOps, ImageFilter, ImageEnhance
+
+def allowed_extension(extension):
+    if extension in ALLOWED_EXTENSIONS:
+        return True
+    else:
+        return False
 
 def allowed_file(filename):
     """
     Function that checks if the file is allowed
     """
     extension = filename.rsplit('.', 1)[1].lower()
-    if extension in ALLOWED_EXTENSIONS:
+    return allowed_extension(extension)
+
+def allowed_filter(filter):
+    if filter in ALLOWED_FILTERS:
+        return True
+    else:
+        return False
+    
+def c_is_valid(c):
+    if c > 0 and c < 100:
         return True
     else:
         return False

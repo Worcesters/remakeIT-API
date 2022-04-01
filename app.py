@@ -6,8 +6,8 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 
 from classes.ImageHandler import ImageHandler
-from utils.constants import HOST, BASE_URL, AUTHORS, ALLOWED_EXTENSIONS
-from utils.func import allowed_file
+from utils.constants import HOST, BASE_URL, AUTHORS, ALLOWED_EXTENSIONS, ALLOWED_FILTERS
+from utils.func import allowed_file, allowed_filter, c_is_valid
 
 load_dotenv()
 SECRET_KEY = getenv('SECRET_KEY')
@@ -62,16 +62,50 @@ def create_app():
             image = ImageHandler(file)
             
             if "filter" in t_args:
-                image.set_filter(t_args['filter'])
-            
+                filter = t_args["filter"]
+                if(allowed_filter(filter)):
+                    image.set_filter(filter)
+                else:
+                    return jsonify(
+                        message={
+                            'fr': f"Le filtre {filter} n'est pas reconnu.",
+                            'en': f"The filter {filter} is not recognized.",
+                        },
+                        filters=ALLOWED_FILTERS,
+                        error=True,
+                    ), 400
             if "compression" or "weight" or "width" in t_args:
                 h = int(t_args['height']) if "height" in t_args else None
                 w = int(t_args['width']) if "width" in t_args else None
                 c = int(t_args['compression']) if "compression" in t_args else None
+                
+                if c:
+                    if not c_is_valid(c):
+                        return jsonify(
+                            message={
+                                'fr': "La compression choisie n'est pas valide. Elle doit être comprise entre 0 et 100.",
+                                'en': "The compression chosen is not valid. It must be between 0 and 100.",
+                            },
+                            error=True,
+                        ), 400
+                        
+                print('Set dimensions')                
                 image.set_dimensions_and_compression(h, w, c)           
 
             if "extension" in t_args:
-                image.set_ext(t_args['extension'])
+                ext = t_args['extension']
+                if(allowed_extension(ext)):
+                    image.set_ext(ext)
+                else:
+                    return jsonify(
+                        message={
+                            'fr': "L'extension cible n'est pas autorisée",
+                            'en': "Target extension is not allowed",
+                        },
+                        error=True,
+                        allowed_extensions=[ext for ext in ALLOWED_EXTENSIONS],
+                        file="{}".format(file.filename)
+                    ), 400
 
             response = make_response(image.encoded)
             response.headers['Content-Type'] = f'image/{image.target_extension}'

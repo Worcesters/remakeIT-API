@@ -4,7 +4,7 @@ import sys
 
 
 def make_anaglyph(img):
-    assert ~isinstance(img, Image.Image)
+    assert not isinstance(img, Image.Image)
     MIN_SIZE = min(img.size)
     H, W = (MIN_SIZE, MIN_SIZE-100)
     
