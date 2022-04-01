@@ -8,7 +8,7 @@ RemakeIT is a toolbox for online images, you can easily change the extension of 
 This project was realized in the framework of the developer training in artificial intelligence with the 3WA
 
 - This project is currently **under development.** 🏗️
-- You can visit projet [here](https://remake-it.herokuapp.com/) or [here too](https://remake-it.herokuapp.com/)
+- You can visit projet [here](https://remakeit.netlify.app/#/) or [here too](https://remake-it.herokuapp.com/)
 
 <div align='center'>
 <a href="https://github.com/TheoBIET" target="_blank">
