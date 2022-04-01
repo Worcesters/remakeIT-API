@@ -61,6 +61,26 @@ class ImageHandler():
             self.file = self.file.filter(ImageFilter.SMOOTH)
         elif f == 'smoothMore':
             self.file = self.file.filter(ImageFilter.SMOOTH_MORE)
+        elif f == 'sepia':
+            new_img = self.file
+            width, height = new_img.size
+            img_map = new_img.load()
+            print(img_map[4,4])
+            # work on pixels
+            for py in range(height):
+                for px in range(width):
+                    # 1) get rgb values
+                    r, g, b = img_map[px, py]
+                    # 2) transform to grayscale
+                    gray = int(r * 0.298912 + g * 0.586611 + b * 0.114478)
+                    # 3) change to sepia
+                    sr = int(gray * 0.8 + 2)
+                    sg = int(gray * 0.6 + 2)
+                    sb = int(gray * 0.4 + 2)
+                    # 4) set new value to picture
+                    img_map[px, py] = sr, sg, sb
+            # 5) save sepia filter
+            self.file = new_img
 
         self.__save()
 
