@@ -42,9 +42,9 @@ class ImageHandler():
         self.__save()
 
     def __get_extension(self, ext):
-        if ext == 'jpg':
+        if ext == 'jpg' or ext == 'JPG':
             return 'jpeg'
-        return ext
+        return ext.lowed()
 
     def __save(self):
         self.bytes_array = io.BytesIO()
